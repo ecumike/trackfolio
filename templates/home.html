@@ -11,12 +11,14 @@
 	<script src="{% static 'd3.v5.min.js' %}"></script>
 	<script src="{% static 'c3.min.js' %}"></script>
 	
+	<style>.c3-legend-item-hidden{opacity: .3}</style>
+	
 {% endblock %}
 
 
 {% block content %}
 
-	<div class="{{ templateHelpers.classes.grid }} mt4">
+	<div class="main-content {{ templateHelpers.classes.grid }} mt4">
 		
 		{% if chart_data.y_tick_values %}<div id="chart" class="mb3" style=""></div>
 		{% else %}
@@ -29,6 +31,14 @@
 	<script>
 		
 		(function () {
+			var xsObj = {{ chart_data.x|safe }},
+				columnsArr = {{ chart_data.columns|safe }};
+				eventNames = [];
+			
+			for (k in xsObj) {
+				eventNames.push(k);
+			}
+			
 			var chart = c3.generate({
 				zoom: {enabled:true},
 				size: {
@@ -41,8 +51,8 @@
 					r: 5,
 				},
 				data: {
-					xs: {{ chart_data.x|safe }},
-					columns: {{ chart_data.columns|safe }},
+					xs: [],
+					columns: [],
 				},
 				axis: {
 					x: {
@@ -63,7 +73,7 @@
 					}
 				},
 				legend: {
-					show: true
+					show: false
 				},
 				tooltip: {
 					format: {
@@ -73,6 +83,79 @@
 					}
 				}
 			});
+			
+			chart.load({
+				columns: columnsArr,
+				xs: xsObj,
+			});
+			
+			
+			function toggleVisibilityClass (el) {
+				var className = 'c3-legend-item-hidden';
+				
+				if (el.classList.contains(className)) {
+					el.classList.remove(className);
+				}
+				else {
+					el.classList.add(className);
+				}
+			}
+			
+			
+			function dimElements (els, b) {
+				els.forEach(function(el) {
+					b ? el.style.opacity = .3 : el.removeAttribute('style') ;
+				});
+			}
+			
+			
+			function getSiblings (elem) {
+				var siblings = [],
+					sibling = elem.parentNode.firstChild;
+			
+				while (sibling) {
+					if (sibling.nodeType === 1 && sibling !== elem) {
+						siblings.push(sibling);
+					}
+					sibling = sibling.nextSibling
+				}			
+				return siblings;
+			};
+			
+			
+			d3.select('.main-content').insert('div').attr('class', 'legend').selectAll('span')
+				.data(eventNames)
+				.enter().append('span')
+				.attr('class', 'f6 pointer flex items-center')
+				.attr('data-id', function (id) { return id; })
+				.html('<span class="w1 h1"></span>')
+				.append('span').attr('class', 'pa2')
+				.html(function (id) { return id; })
+				.each(function (id) {
+					this.previousElementSibling.style.backgroundColor = chart.color(id);
+				})
+				.on('mouseover', function (id) {
+					var siblings = getSiblings(this.parentElement);
+					if (!this.parentElement.classList.contains('c3-legend-item-hidden')) {
+						dimElements(siblings, true);
+					}
+					chart.focus(id);
+				})
+				.on('mouseout', function (id) {
+					var siblings = getSiblings(this.parentElement);
+					dimElements(siblings, false);
+					chart.revert();
+				})
+				.on('click', function (id) {
+					var siblings = getSiblings(this.parentElement);
+					toggleVisibilityClass(this.parentElement);
+					if (!this.parentElement.classList.contains('c3-legend-item-hidden')) {
+						dimElements(siblings, true);
+					}
+					else { dimElements(siblings, false) }
+					chart.toggle(id);
+				});
+			
 		})();
 	</script>
 	

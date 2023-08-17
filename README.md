@@ -35,6 +35,11 @@ $ source .venv/bin/activate
 (.venv) $ ./manage.py clear_events
 ```
 
+### Sample screenshot
+![image](https://github.com/ecumike/trackfolio/assets/7328459/716dfcfc-7d53-4246-9c41-03511ae1f283)
+
+
+
 ### ⭐️ Support
 Give a ⭐️  if this project helped you!
 

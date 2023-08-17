@@ -1,0 +1,80 @@
+{% extends "page_template.html" %}
+{% load static %}
+
+{% block browserTitle %} {{ block.super}} Events timeline {% endblock %}
+
+{% block pageTitle %} Events timeline {% endblock %}
+
+{% block extraFiles %} 
+	
+	<link href="{% static 'c3.min.css' %}" rel="stylesheet">
+	<script src="{% static 'd3.v5.min.js' %}"></script>
+	<script src="{% static 'c3.min.js' %}"></script>
+	
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="{{ templateHelpers.classes.grid }} mt4">
+		
+		{% if chart_data.y_tick_values %}<div id="chart" class="mb3" style=""></div>
+		{% else %}
+			<p>You haven't created any events logs yet</p>
+		{% endif %}
+		
+	</div>
+	
+	
+	<script>
+		
+		(function () {
+			var chart = c3.generate({
+				zoom: {enabled:true},
+				size: {
+					height: {{ chart_data.y_tick_values|safe }}.length * 50,
+				},
+				padding: {
+					right: 20,
+				},
+				point: {
+					r: 5,
+				},
+				data: {
+					xs: {{ chart_data.x|safe }},
+					columns: {{ chart_data.columns|safe }},
+				},
+				axis: {
+					x: {
+						type: 'timeseries',
+						tick: {
+							outer: false,
+							format: '%b %d, %Y',
+							rotate: 60
+						}
+					},
+					y: {
+						show: false,
+						tick: {
+							outer: false,
+							values: {{ chart_data.y_tick_values|safe }},
+							format: d3.format("d")
+						}
+					}
+				},
+				legend: {
+					show: true
+				},
+				tooltip: {
+					format: {
+						value: function () {
+							return '';
+						}
+					}
+				}
+			});
+		})();
+	</script>
+	
+
+{% endblock %}

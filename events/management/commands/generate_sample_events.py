@@ -45,7 +45,6 @@ def createSampleDataSet():
 		
 		EventLog.objects.create(
 			date = randomDate(),
-			name = event.name,
 			event = event
 		)
 	

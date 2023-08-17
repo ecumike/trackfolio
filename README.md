@@ -1,6 +1,8 @@
 # trackfolio
 
-Django app to track any type of event or activity so you can see frequency of your events
+Are you a little kooky like me, and like to track stuff? Then this is the app for you. 
+Track any type of event or activity so you can see frequency of your events. 
+For example: How often you change HVAC filter, get haircuts, cut your cat's nails, clean your espresso machine.
 
 ## 📖 Installation
 ```
@@ -26,11 +28,11 @@ $ source .venv/bin/activate
 ### Sample data
 
 ```
-# Generate a sample data set of ## job postings (minimum 20)
-(.venv) $ ./manage.py generate_sample_data 39
+# Generate a sample data set of events and event logs
+(.venv) $ ./manage.py generate_sample_events
 
-# Clear sample data
-(.venv) $ ./manage.py clear_sample_data
+# Clear all events and logs
+(.venv) $ ./manage.py clear_events
 ```
 
 ### ⭐️ Support

@@ -11,7 +11,14 @@
 	<script src="{% static 'd3.v5.min.js' %}"></script>
 	<script src="{% static 'c3.min.js' %}"></script>
 	
-	<style>.c3-legend-item-hidden{opacity: .3}</style>
+	<style>
+		.legend {
+			column-count: 3;
+			column-gap: 40px;
+		}
+		
+		.c3-legend-item-hidden{opacity: .3}
+	</style>
 	
 {% endblock %}
 
@@ -19,6 +26,20 @@
 {% block content %}
 
 	<div class="main-content {{ templateHelpers.classes.grid }} mt4">
+		<form method="post" id="event-log-form" action="{% url 'events:add_event_log' %}">
+			{% csrf_token %}
+			<div class="flex items-center">
+				<div class="mr3-ns"><label for="event">Add an event log: </label></div>
+				<div class="mr2-ns"><select id="event" aria-label="Select an event" name="event" data-tags="true" data-minimum-results-for-search="1">
+					<option>Select or create new</option>
+					{% for event in events %}
+						<option value="{{ event.id }}">{{ event.name }}</option>
+					{% endfor %}
+				</select></div>
+				<div class="mr2-ns"><input aria-label="Select a date" class="" style="width:140px;" type="date" name="date"></div>
+				<div class="mr2-ns"><button class="{{ templateHelpers.classes.bluePriButton }} {{ templateHelpers.classes.button }}">Add</button></div>
+			</div>
+		</form>
 		
 		{% if chart_data.y_tick_values %}<div id="chart" class="mb3" style=""></div>
 		{% else %}

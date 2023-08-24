@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'hijack',
     'hijack.contrib.admin',
     'debug_toolbar',
+    'django_browser_reload',
     # Our apps
     'events',
 ]
@@ -66,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'hijack.middleware.HijackUserMiddleware',
+    'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'trackfolio.urls'

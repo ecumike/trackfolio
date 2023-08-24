@@ -54,7 +54,23 @@ class Event(models.Model):
 			'columns': columns,
 			'y_tick_values': y_tick_values,
 		}
-	
+		
+		
+	@staticmethod
+	def get_create(event_id):
+		if event_id.isdigit():
+			try:
+				event = Event.objects.get(id=event_id)
+				return event
+			except:
+				raise Exception(f'Event with ID: {event_id} not found')
+		else:
+			try:
+				event, created = Event.objects.get_or_create(name=event_id)
+				return event
+			except:
+				raise Exception(f'Could not create event with name: {event_id}')
+		
 	
 class EventLog(models.Model):
 	created_at = models.DateTimeField(auto_now_add=True, editable=False)
@@ -69,5 +85,27 @@ class EventLog(models.Model):
 	def __str__(self):
 		return f'{self.event.name} - {self.date}'
 	
-
 	
+	@staticmethod
+	def add_new(request):
+		event_id = request.POST.get('event', None)
+		event_date = request.POST.get('date', None)
+		
+		if not event_date:
+			raise Exception('No event date specified')
+			
+		if event_id:
+			event = Event.get_create(event_id)
+		else:
+			raise Exception('No event ID given')
+		
+		try:
+			EventLog.objects.create(
+				event = event,
+				date = event_date,
+			)
+		except:
+			raise Exception(f'Error creating event with ID: {event_id} and date {event_date}')
+		
+		
+		

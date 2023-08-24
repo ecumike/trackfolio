@@ -17,12 +17,11 @@ def home(request):
 def add_event_log(request):
 	try:
 		EventLog.add_new(request)
+		return JsonResponse({
+			'results': 'success'
+		})
 	except Exception as ex:
 		return JsonResponse({
-			'result': f'{ex}'
-		})
-	
-	return JsonResponse({
-		'chart_data': Event.get_timeline_data()
-	})
+			'results': f'{ex}'
+		}, status=400)
 	

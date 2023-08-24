@@ -1,15 +1,13 @@
 {% extends "page_template.html" %}
 {% load static %}
 
-{% block browserTitle %} {{ block.super}} Events timeline {% endblock %}
+{% block browserTitle %} {{ block.super}} Trackfolio {% endblock %}
 
-{% block pageTitle %} Events timeline {% endblock %}
+{% block pageTitle %} Trackfolio {% endblock %}
 
 {% block extraFiles %} 
 	
 	<link href="{% static 'c3.min.css' %}" rel="stylesheet">
-	<script src="{% static 'd3.v5.min.js' %}"></script>
-	<script src="{% static 'c3.min.js' %}"></script>
 	
 	<style>
 		.legend {
@@ -19,6 +17,9 @@
 		
 		.c3-legend-item-hidden{opacity: .3}
 	</style>
+	
+	<script src="{% static 'd3.v5.min.js' %}"></script>
+	<script src="{% static 'c3.min.js' %}"></script>
 	
 {% endblock %}
 
@@ -41,7 +42,8 @@
 			</div>
 		</form>
 		
-		{% if chart_data.y_tick_values %}<div id="chart" class="mb3" style=""></div>
+		{% if chart_data.y_tick_values %}
+			<div id="chart" class="mv3" style=""></div>
 		{% else %}
 			<p>You haven't created any events logs yet</p>
 		{% endif %}
@@ -51,7 +53,25 @@
 	
 	<script>
 		
-		(function () {
+		(function ($) {
+			
+			function setupFormSubmit () {
+				document.querySelector('#event-log-form').addEventListener('submit', function (evt) {
+					evt.preventDefault();
+					$.post({
+						url: this.action,
+						data: $(this).serialize(),
+						success: function () {
+							window.location.reload();
+						},
+						error: function (request) {
+							alert(request.responseJSON.results);
+						}
+					});
+				});
+			}
+			setupFormSubmit();
+			
 			var xsObj = {{ chart_data.x|safe }},
 				columnsArr = {{ chart_data.columns|safe }};
 				eventNames = [];
@@ -177,7 +197,7 @@
 					chart.toggle(id);
 				});
 			
-		})();
+		})(jQuery);
 	</script>
 	
 

@@ -27,23 +27,14 @@
 
 	<body class="helvetica bg-white">
 		<main role="main" aria-label="Trackfolio page content">
-			{# header #}
-			<!-- <div class="bg-white relative z-1">
-				<nav class="shadow-2 flex flex-wrap justify-between bg-white custom-header pl3 pr4">
-					<div class="flex flex-wrap items-baseline">
-						<div><a class="fw8 underline-hover pa3 link f6 f5-ns fw5 dib relative hover-dark-blue textcolor" href="{% url 'events:home' %}">Trackfolio</a></div>
-						
-					</div>
-				</nav>
-			</div>
-		 -->
 			{% block leadspace %}
-				<div class="{{ templateHelpers.classes.grid }} pv4 bg-black">
-					<h1 class="near-white lh-title f3 fw6 mv0 pv0 mw7">{% block pageTitle %}Missing page title{% endblock %}</h1>
-					{% block pageSubtitle %}{% endblock %}
+				<div class="{{ templateHelpers.classes.grid }} pv4 bg-black near-white">
+					<div class="flex-ns items-center justify-between">
+						<h1 class="lh-title f3 fw6 mv0 pv0 mw7">{% block pageTitle %}Missing page title{% endblock %}</h1>
+						<div class="mt0-ns mt3"><a href="{% url 'admin:app_list' app_label='events' %}" class="{{ templateHelpers.classes.link }}"><span class="light-blue hover-white">Edit / Delete event</span></a></div>
+					</div>
 				</div>
 			{% endblock %}
-
 			
 			<div style="min-height:calc(100vh - 255px);">
 				{% block content %} {% endblock %}

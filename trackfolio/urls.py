@@ -26,13 +26,14 @@ from django.views.generic import RedirectView, TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hijack/', include('hijack.urls')),
-    path("__debug__/", include("debug_toolbar.urls")),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path('__reload__/', include('django_browser_reload.urls')),
     
     ## Map default favicon URL to static file location.
     re_path(r'^favicon.ico$', RedirectView.as_view(
         url=staticfiles_storage.url('shared/img/favicon.ico'),
         permanent=False),
-        name="favicon"
+        name='favicon'
     ),
     
     path('', RedirectView.as_view(url='/events/')),

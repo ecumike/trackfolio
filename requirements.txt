@@ -7,3 +7,4 @@ django-extensions
 django-debug-toolbar
 django-hijack
 pandas
+django-browser-reload

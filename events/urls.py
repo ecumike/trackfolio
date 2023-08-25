@@ -23,4 +23,6 @@ from .views import *
 
 urlpatterns = [
 	path('', home, name='home'),
+	path('api/event_log/add/', add_event_log, name='add_event_log'),
+	
 ]

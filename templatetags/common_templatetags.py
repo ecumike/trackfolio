@@ -10,8 +10,8 @@ def getTemplateHelpers(context):
 	horizontalSpace = 'ph3 ph4-ns'
 	rounded = 'br2'
 	
-	commonButton = 'bw0 dib pointer ph3 pv2 custom-animate-all border-box lh-copy custom-standard-button ' + rounded
-	smallButton = 'bw0 dib pointer ph3 pv2 custom-animate-all border-box ' + rounded
+	commonButton = 'bw0 dib pointer ph3 pv2 bl-animate-all border-box lh-copy custom-standard-button ' + rounded
+	smallButton = 'bw0 dib pointer ph3 pv2 bl-animate-all border-box ' + rounded
 	
 	tab = rounded + ' custom-tab relative w-auto bg-animate db pointer ph4 pv3 mb0 bw0 fw5 bg-near-white hover-bg-light-gray'
 	
@@ -21,9 +21,9 @@ def getTemplateHelpers(context):
 		'classes': {
 			'button': commonButton,
 			'smallButton': smallButton,
-			'bluePriButton': 'bg-blue-70 hover-bg-dark-blue white hover-white',
+			'bluePriButton': 'bg-blue hover-bg-dark-blue white hover-white',
 			'blueSecButton': 'bg-near-white hover-bg-dark-blue dark-blue hover-white',
-			'blueTertiaryButton': 'bg-white hover-bg-dark-blue blue-70 hover-white nounderline',
+			'blueTertiaryButton': 'bg-white hover-bg-dark-blue blue hover-white nounderline',
 			'greenPriButton': 'bg-green hover-bg-dark-green white hover-white',
 			'redPriButton': 'bg-red hover-bg-dark-red white hover-white',
 			'redSecButton': 'bg-near-white hover-bg-red dark-red hover-white',
@@ -32,8 +32,8 @@ def getTemplateHelpers(context):
 			'grid': horizontalSpace,
 			'horizontalSpace': horizontalSpace,
 			'hasIconFlexCenter': 'inline-flex items-center underline-hover',
-			'link': 'custom-animate-all link linkcolor',
-			'navItem': 'custom-animate-all underline-hover pa3 link f6 f5-ns db relative hover-dark-blue textcolor',
+			'link': 'bl-animate-all link linkcolor',
+			'navItem': 'bl-animate-all underline-hover pa3 link f6 f5-ns db relative hover-dark-blue textcolor',
 			'pageTitleSecondary': 'fw4',
 			'rounded': rounded,
 			'tableListCell': 'pv3 pr3 bb b--black-20',

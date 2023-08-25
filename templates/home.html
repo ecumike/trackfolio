@@ -33,7 +33,7 @@
 				<div class="mr3-ns mb3">Add an event log:</div>
 				<div class="mr2-ns mb3"><select class="w-100 mw5" data-width="element" aria-label="Select an event" name="event" data-tags="true" data-minimum-results-for-search="1" data-placeholder="Select or create new">
 					<option value=""></option>
-					{% for event in events %}
+					{% for event in events_with_intervals %}
 						<option value="{{ event.id }}">{{ event.name }}</option>
 					{% endfor %}
 				</select></div>
@@ -54,6 +54,12 @@
 	<script>
 		
 		(function ($) {
+			var eventsIntervals = {
+				{% for event in events_with_intervals %}
+					'{{ event.name }}': {{ event.average_interval_days }},
+				{% endfor %}
+				};
+			
 			
 			function setupFormSubmit () {
 				document.querySelector('#event-log-form').addEventListener('submit', function (evt) {
@@ -71,6 +77,7 @@
 				});
 			}
 			setupFormSubmit();
+			
 			
 			var xsObj = {{ chart_data.x|safe }},
 				columnsArr = {{ chart_data.columns|safe }};
@@ -118,8 +125,13 @@
 				},
 				tooltip: {
 					format: {
-						value: function () {
-							return '';
+						value: function (value, ratio, id, index) {
+							if (eventsIntervals[id] > 0) {
+								return eventsIntervals[id] + ' days avg';
+							}
+							else {
+								return '';
+							}
 						}
 					}
 				}
@@ -163,15 +175,21 @@
 				return siblings;
 			};
 			
-			
-			d3.select('.main-content').insert('div').attr('class', 'legend').selectAll('span')
+			// Create custom legend.
+			d3.select('.main-content').insert('div').attr('class', 'legend mb4').selectAll('span')
 				.data(eventNames)
 				.enter().append('span')
 				.attr('class', 'f6 pointer flex items-center')
 				.attr('data-id', function (id) { return id; })
 				.html('<span class="w1 h1"></span>')
 				.append('span').attr('class', 'pa2')
-				.html(function (id) { return id; })
+				.html(function (id) { 
+					var showInterval = '';
+					if (eventsIntervals[id] > 0) {
+						showInterval = '<span class="ml2 f7 dark-gray">(' + eventsIntervals[id] + ' days avg)</span>';
+					}
+					return id + showInterval; 
+				})
 				.each(function (id) {
 					this.previousElementSibling.style.backgroundColor = chart.color(id);
 				})

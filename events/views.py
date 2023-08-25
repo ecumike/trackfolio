@@ -1,6 +1,8 @@
-from django.http import JsonResponse
-from django.shortcuts import render
+import json
 
+from django.http import JsonResponse
+from django.db.models.functions import Lower
+from django.shortcuts import render
 
 from events.models import Event, EventLog
 
@@ -9,7 +11,7 @@ from events.models import Event, EventLog
 def home(request):
 	context = {
 		'chart_data': Event.get_timeline_data(),
-		'events': Event.objects.only('name'),
+		'events_with_intervals': list(Event.objects.values('id', 'name', 'average_interval_days').order_by(Lower('name'))),
 	}
 	return render(request, 'home.html', context)
 	

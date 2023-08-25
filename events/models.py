@@ -1,9 +1,8 @@
-import pandas as pd
-
 from datetime import timedelta
 
 from django.db import models
 from django.db.models import Avg, Q
+from django.db.models.functions import Lower
 from django.utils import timezone
 
 
@@ -16,6 +15,7 @@ class Event(models.Model):
 	updated_at = models.DateTimeField(auto_now=True, editable=False)
 	
 	name = models.CharField(max_length=100, unique=True)
+	average_interval_days = models.PositiveIntegerField(default=0, editable=False)
 	
 	class Meta:
 		ordering = ['name']
@@ -24,6 +24,18 @@ class Event(models.Model):
 		return self.name
 	
 	
+	def set_average_interval(self):
+		# Last event - first event in days / # of events.
+		try:
+			thisEventLogs = self.event_log_event.all()
+			lastEventDate = thisEventLogs.order_by('-date').first().date
+			firstEventDate = thisEventLogs.order_by('date').first().date
+			self.average_interval_days = (lastEventDate - firstEventDate).days / thisEventLogs.count()
+			self.save()
+		except Exception as ex:
+			pass
+		
+		
 	@staticmethod
 	def get_timeline_data():
 		"""
@@ -35,7 +47,7 @@ class Event(models.Model):
 		columns = []
 		
 		# Get unique event names, then create object for each with array of dates.
-		for i, event in enumerate(Event.objects.order_by('name')):
+		for i, event in enumerate(Event.objects.order_by(Lower('name'))):
 			x_axis_mappings[event.name] = f'{event.name}_x'
 			y_tick_values.append(i)
 			
@@ -85,7 +97,11 @@ class EventLog(models.Model):
 	def __str__(self):
 		return f'{self.event.name} - {self.date}'
 	
-	
+	def save(self, *args, **kwargs):
+		super(EventLog, self).save(*args, **kwargs)
+		self.event.set_average_interval()
+		
+
 	@staticmethod
 	def add_new(request):
 		event_id = request.POST.get('event', None)

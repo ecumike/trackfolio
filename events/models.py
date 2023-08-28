@@ -28,10 +28,11 @@ class Event(models.Model):
 		# Last event - first event in days / # of events.
 		try:
 			thisEventLogs = self.event_log_event.all()
-			lastEventDate = thisEventLogs.order_by('-date').first().date
-			firstEventDate = thisEventLogs.order_by('date').first().date
-			self.average_interval_days = (lastEventDate - firstEventDate).days / thisEventLogs.count()
-			self.save()
+			if thisEventLogs.count() > 1:
+				lastEventDate = thisEventLogs.order_by('-date').first().date
+				firstEventDate = thisEventLogs.order_by('date').first().date
+				self.average_interval_days = (lastEventDate - firstEventDate).days / (thisEventLogs.count()-1)
+				self.save()
 		except Exception as ex:
 			pass
 		

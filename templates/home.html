@@ -15,7 +15,7 @@
 			column-gap: 40px;
 		}
 		
-		.c3-legend-item-hidden{opacity: .3}
+		.c3_legend_item_hidden{opacity: .3}
 	</style>
 	
 	<script src="{% static 'd3.v5.min.js' %}"></script>
@@ -27,23 +27,34 @@
 {% block content %}
 
 	<div class="main-content {{ templateHelpers.classes.grid }} mt4">
-		<form method="post" id="event-log-form" action="{% url 'events:add_event_log' %}">
-			{% csrf_token %}
-			<div class="flex-ns items-center">
-				<div class="mr3-ns mb3">Add an event log:</div>
-				<div class="mr2-ns mb3"><select class="w-100 mw5" data-width="element" aria-label="Select an event" name="event" data-tags="true" data-minimum-results-for-search="1" data-placeholder="Select or create new">
-					<option value=""></option>
-					{% for event in events_with_intervals %}
-						<option value="{{ event.id }}">{{ event.name }}</option>
+		<div class="flex-ns justify-between">
+			{% if upcoming_events %}
+				<div class="mb4 lh-copy mr4-ns">
+					<div class="mb2"><span class="b">Upcoming events</span> <span class="gray">(based on history)</span></div>
+					{% for event in upcoming_events %}
+						<div>{{ event.next_event_date }} - {{ event.name }}</div>
 					{% endfor %}
-				</select></div>
-				<div class="mr2-ns mb3"><input aria-label="Select a date" style="width:140px;" type="date" name="date"></div>
-				<div class="mr2-ns mb3"><button class="{{ templateHelpers.classes.bluePriButton }} {{ templateHelpers.classes.button }}">Add</button></div>
-			</div>
-		</form>
+				</div>
+			{% endif %}
+			<form method="post" id="event-log-form" action="{% url 'events:add_event_log' %}">
+				{% csrf_token %}
+				<div class="mr3-ns mb3">Log an event that happened</div>
+				<div class="flex-ns items-center">
+					<div class="mr2-ns mb3"><select class="w-100 mw5" data-width="element" aria-label="Select an event" name="event" data-tags="true" data-minimum-results-for-search="1" data-placeholder="Select or create new">
+						<option value=""></option>
+						{% for event in events_with_intervals %}
+							<option value="{{ event.id }}">{{ event.name }}</option>
+						{% endfor %}
+					</select></div>
+					<div class="mr2-ns mb3"><input aria-label="Select a date" style="width:140px;" type="date" name="date"></div>
+					<div class="mr2-ns mb3"><button class="{{ templateHelpers.classes.bluePriButton }} {{ templateHelpers.classes.button }}">Add</button></div>
+				</div>
+			</form>
+		</div>
 		
 		{% if chart_data.y_tick_values %}
 			<div id="chart" class="mv3" style=""></div>
+			<div id="chart-legend" class="legend mb4"></div>
 		{% else %}
 			<p>You haven't created any events logs yet</p>
 		{% endif %}
@@ -144,8 +155,8 @@
 			
 			
 			function toggleVisibilityClass (el) {
-				var className = 'c3-legend-item-hidden';
-				
+				var className = 'c3_legend_item_hidden';
+					
 				if (el.classList.contains(className)) {
 					el.classList.remove(className);
 				}
@@ -176,7 +187,7 @@
 			};
 			
 			// Create custom legend.
-			d3.select('.main-content').insert('div').attr('class', 'legend mb4').selectAll('span')
+			d3.select('#chart-legend').selectAll('span')
 				.data(eventNames)
 				.enter().append('span')
 				.attr('class', 'f6 pointer flex items-center')

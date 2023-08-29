@@ -15,7 +15,8 @@ class Event(models.Model):
 	updated_at = models.DateTimeField(auto_now=True, editable=False)
 	
 	name = models.CharField(max_length=100, unique=True)
-	average_interval_days = models.PositiveIntegerField(default=0, editable=False)
+	average_interval_days = models.PositiveIntegerField(default=0)
+	next_event_date = models.DateField(null=True, blank=True)
 	
 	class Meta:
 		ordering = ['name']
@@ -24,14 +25,21 @@ class Event(models.Model):
 		return self.name
 	
 	
+	def set_next_event_date(self):
+		if self.average_interval_days > 0:
+			last_event_date = EventLog.objects.filter(event=self).only('date').order_by('-date').first().date
+			self.next_event_date = last_event_date + timedelta(days=self.average_interval_days)
+			self.save()
+	
+	
 	def set_average_interval(self):
 		# Last event - first event in days / # of events.
 		try:
-			thisEventLogs = self.event_log_event.all()
-			if thisEventLogs.count() > 1:
-				lastEventDate = thisEventLogs.order_by('-date').first().date
-				firstEventDate = thisEventLogs.order_by('date').first().date
-				self.average_interval_days = (lastEventDate - firstEventDate).days / (thisEventLogs.count()-1)
+			this_event_logs = self.event_log_event.all()
+			if this_event_logs.count() > 1:
+				lastEventDate = this_event_logs.order_by('-date').first().date
+				firstEventDate = this_event_logs.order_by('date').first().date
+				self.average_interval_days = (lastEventDate - firstEventDate).days / (this_event_logs.count()-1)
 				self.save()
 		except Exception as ex:
 			pass
@@ -54,7 +62,7 @@ class Event(models.Model):
 			
 			dates_arr =[f'{event.name}_x']
 			values_arr =[event.name]
-						
+				
 			for event_date in event.event_log_event.values_list('date', flat=True).order_by('date'):
 				dates_arr.append(event_date.strftime('%Y-%m-%d'))
 				values_arr.append(i)
@@ -101,6 +109,7 @@ class EventLog(models.Model):
 	def save(self, *args, **kwargs):
 		super(EventLog, self).save(*args, **kwargs)
 		self.event.set_average_interval()
+		self.event.set_next_event_date()
 		
 
 	@staticmethod

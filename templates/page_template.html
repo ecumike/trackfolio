@@ -16,10 +16,14 @@
 
 		<title>{% block browserTitle %}Trackfolio - {% endblock %}</title>
 
-		<link href="{% static 'bloodline-bundle.min.css' %}" rel="stylesheet">
+		<link href="{% static 'tachyons.min.css' %}" rel="stylesheet">
+		<link href="{% static 'select2.min.css' %}" rel="stylesheet">
+		<link href="{% static 'bloodline.min.css' %}" rel="stylesheet">
 		<link href="{% static 'site-common.css' %}" rel="stylesheet">
 		
-		<script src="{% static 'bloodline-bundle.min.js' %}"></script>
+		<script src="{% static 'jquery.min.js' %}"></script>
+		<script src="{% static 'select2.min.js' %}"></script>
+		<script src="{% static 'bloodline.min.js' %}"></script>
 			
 		{% block extraFiles %} {% endblock %}
 		

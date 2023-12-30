@@ -99,7 +99,6 @@
 			}
 			
 			var chart = c3.generate({
-				zoom: {enabled:true},
 				size: {
 					height: {{ chart_data.y_tick_values|safe }}.length * 50,
 				},
@@ -118,7 +117,7 @@
 						type: 'timeseries',
 						tick: {
 							outer: false,
-							format: '%b %d, %Y',
+							format: '%m-%d-%Y',
 							rotate: 60
 						}
 					},

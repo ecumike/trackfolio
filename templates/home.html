@@ -46,6 +46,7 @@
 							<option value="{{ event.id }}">{{ event.name }}</option>
 						{% endfor %}
 					</select></div>
+					<div class="mr2-ns mb3"><input type="text" placeholder="comments" name="comments" value=""></div>
 					<div class="mr2-ns mb3"><input aria-label="Select a date" style="width:140px;" type="date" name="date"></div>
 					<div class="mr2-ns mb3"><button class="{{ templateHelpers.classes.bluePriButton }} {{ templateHelpers.classes.button }}">Add</button></div>
 				</div>
@@ -92,8 +93,9 @@
 			
 			var xsObj = {{ chart_data.x|safe }},
 				columnsArr = {{ chart_data.columns|safe }};
-				eventNames = [];
-			
+				eventNames = [],
+				comments = {{ chart_data.comments|safe }};
+			console.log(comments);
 			for (k in xsObj) {
 				eventNames.push(k);
 			}
@@ -136,12 +138,17 @@
 				tooltip: {
 					format: {
 						value: function (value, ratio, id, index) {
+							contents = ''
+						
 							if (eventsIntervals[id] > 0) {
-								return eventsIntervals[id] + ' days avg';
+								contents += eventsIntervals[id] + ' days avg';
 							}
-							else {
-								return '';
+							
+							if (comments[id][index] != 'null') {
+								contents += ' (' + comments[id][index] + ')';
 							}
+							
+							return contents;
 						}
 					}
 				}

@@ -14,6 +14,7 @@ def home(request):
 		'events_with_intervals': list(Event.objects.values('id', 'name', 'average_interval_days').order_by(Lower('name'))),
 		'upcoming_events': Event.objects.filter(next_event_date__isnull=False).only('name','next_event_date').order_by('next_event_date')
 	}
+	
 	return render(request, 'home.html', context)
 	
 	

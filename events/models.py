@@ -50,10 +50,13 @@ class Event(models.Model):
 		"""
 		Usage: d3
 		Create an x-axis and date array for each event.
+		The "y-tick-values" is simply used as a y-axis value for the date to separate
+		the different data series into their own lines, else they would all be on one flat line.
 		"""
 		x_axis_mappings = {}
 		y_tick_values = []
 		columns = []
+		comments = {}
 		
 		# Get unique event names, then create object for each with array of dates.
 		for i, event in enumerate(Event.objects.order_by(Lower('name'))):
@@ -62,10 +65,12 @@ class Event(models.Model):
 			
 			dates_arr =[f'{event.name}_x']
 			values_arr =[event.name]
-				
-			for event_date in event.event_log_event.values_list('date', flat=True).order_by('date'):
-				dates_arr.append(event_date.strftime('%Y-%m-%d'))
+			comments[event.name] = []
+			
+			for event_log in event.event_log_event.only('date', 'comments').order_by('date'):
+				dates_arr.append(event_log.date.strftime('%Y-%m-%d'))
 				values_arr.append(i)
+				comments[event.name].append(event_log.comments if event_log.comments else 'null')
 				
 			columns.extend([dates_arr, values_arr])
 		
@@ -74,6 +79,7 @@ class Event(models.Model):
 			'x': x_axis_mappings, 
 			'columns': columns,
 			'y_tick_values': y_tick_values,
+			'comments': comments,
 		}
 		
 		
@@ -99,6 +105,7 @@ class EventLog(models.Model):
 	
 	event = models.ForeignKey(Event, related_name='event_log_event', on_delete=models.CASCADE)
 	date = models.DateField(default=getToday)
+	comments = models.CharField(max_length=100, null=True, blank=True)
 	
 	class Meta:
 		ordering = ['date']
@@ -114,24 +121,26 @@ class EventLog(models.Model):
 
 	@staticmethod
 	def add_new(request):
-		event_id = request.POST.get('event', None)
-		event_date = request.POST.get('date', None)
+		id = request.POST.get('event', None)
+		date = request.POST.get('date', None)
+		comments = request.POST.get('comments', None)
 		
-		if not event_date:
+		if not date:
 			raise Exception('No event date specified')
 			
-		if event_id:
-			event = Event.get_create(event_id)
+		if id:
+			event = Event.get_create(id)
 		else:
 			raise Exception('No event ID given')
 		
 		try:
 			EventLog.objects.create(
+				date = date,
 				event = event,
-				date = event_date,
+				comments = comments,
 			)
 		except:
-			raise Exception(f'Error creating event with ID: {event_id} and date {event_date}')
+			raise Exception(f'Error creating event with ID: {id} and date {date}')
 		
 		
 		
